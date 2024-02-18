@@ -1,0 +1,134 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post-Comments Service</title>
+</head>
+<body>
+    <h1>Welcome to the Post-Comments Service!</h1>
+
+    <h2>Add Post:</h2>
+    <form id="add-post-form">
+        <label for="post-text">Enter your post text:</label><br>
+        <input type="text" id="post-text" name="post-text"><br>
+        <button type="submit">Add Post</button>
+    </form>
+
+    <h2>Add Comment:</h2>
+    <form id="add-comment-form">
+        <label for="post-id">Enter post ID:</label><br>
+        <input type="text" id="post-id" name="post-id"><br>
+        <label for="comment-text">Enter your comment text:</label><br>
+        <input type="text" id="comment-text" name="comment-text"><br>
+        <button type="button" onclick="applyBold()">Bold</button>
+        <button type="button" onclick="applyItalics()">Italics</button>
+        <button type="button" onclick="addHyperlink()">Hyperlink</button>
+        <button type="submit">Add Comment</button>
+    </form>
+
+    <h2>Posts:</h2>
+    <ul id="posts-list">
+        <!-- Posts will be dynamically added here -->
+    </ul>
+
+    <script>
+        // Function to fetch posts from the server
+        function fetchPosts() {
+            fetch('/posts')
+            .then(response => response.json())
+            .then(posts => {
+                const postsList = document.getElementById('posts-list');
+                postsList.innerHTML = ''; // Clear existing list
+
+                posts.forEach(post => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `Post ID: ${post.post_id}, Text: ${post.text}`;
+
+                    // Add comments if available
+                    if (post.comments.length > 0) {
+                        const commentsList = document.createElement('ul');
+                        post.comments.forEach(comment => {
+                            const commentItem = document.createElement('li');
+                            commentItem.innerHTML = `Comment ID: ${comment.comment_id}, Text: ${comment.text}`;
+                            commentsList.appendChild(commentItem);
+                        });
+                        listItem.appendChild(commentsList);
+                    }
+
+                    postsList.appendChild(listItem);
+                });
+            });
+        }
+
+        // Fetch posts when the page loads
+        fetchPosts();
+
+        // Event listener for adding a post
+        document.getElementById('add-post-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const postText = document.getElementById('post-text').value;
+            fetch('/posts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: postText })
+            })
+            .then(response => response.json())
+            .then(() => {
+                fetchPosts(); // Refresh posts after adding a new post
+            });
+        });
+
+        // Function to apply bold formatting to comment text
+        function applyBold() {
+            const commentInput = document.getElementById('comment-text');
+            const currentPosition = commentInput.selectionStart;
+            const commentText = commentInput.value;
+            const modifiedText = commentText.slice(0, currentPosition) + "<b>" + commentText.slice(currentPosition) + "</b>";
+            commentInput.value = modifiedText;
+        }
+
+        // Function to apply italics formatting to comment text
+        function applyItalics() {
+            const commentInput = document.getElementById('comment-text');
+            const currentPosition = commentInput.selectionStart;
+            const commentText = commentInput.value;
+            const modifiedText = commentText.slice(0, currentPosition) + "<i>" + commentText.slice(currentPosition) + "</i>";
+            commentInput.value = modifiedText;
+        }
+
+        // Function to add a hyperlink to comment text
+        function addHyperlink() {
+            const commentInput = document.getElementById('comment-text');
+            const currentPosition = commentInput.selectionStart;
+            const commentText = commentInput.value;
+            const url = prompt("Enter the URL:");
+            if (url) {
+                const modifiedText = commentText.slice(0, currentPosition) + `<a href="${url}">Link</a>` + commentText.slice(currentPosition);
+                commentInput.value = modifiedText;
+            }
+        }
+
+        // Event listener for adding a comment
+        document.getElementById('add-comment-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const postId = document.getElementById('post-id').value;
+            const commentText = document.getElementById('comment-text').value;
+            fetch(`/posts/${postId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: commentText })
+            })
+            .then(response => response.json())
+            .then(() => {
+                fetchPosts(); // Refresh posts after adding a new comment
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+                        Post-Comments Service Documentatio
+        
+
+Overview:
+
+- The Post-Comments Service is a Flask-based web application for managing posts and comments.
+
+
+Installation:
+
+- To install the application, ensure you have Python and Flask installed.
+- Clone the repository and install dependencies using pip install -r requirements.txt.
+
+Folder Structure:
+├── app.py
+├── models.py
+├── index.html
+└── venv/
+
+4. Database Setup:
+
+- The application uses an SQLite database named posts.db.
+- Run the create_tables() function to initialize the database tables.
+
+
+5. Running the Application:
+
+- Run the Flask application using python app.py.
+- Access the application in your web browser at http://127.0.0.1:5000.
+
+
+6. User Interface:
+
+- The application provides forms for adding posts and comments.
+- Posts and comments are displayed in a list format on the homepage.
+
+
+7. Adding Posts and Comments:
+
+- To add a post, enter text in the "Add Post" form and submit.
+- To add a comment, enter the post ID and comment text in the "Add Comment" form and submit.
+
+
+8. Viewing Posts and Comments:
+
+- Posts and their associated comments are displayed on the homepage.
+- Comments can be viewed by expanding the post.
+
+
+9. Customizing Comments:
+
+- Users can format their comments using bold, italics, and hyperlinks.
+- Buttons are provided in the "Add Comment" form for applying formatting.
+
+
+10. Troubleshooting:
+
+- If you encounter any issues, ensure you have the correct dependencies installed and the database is properly initialized.
+
+11. Contributing:
+
+- Contributions are welcome! Please submit bug reports or feature requests via GitHub issues.
+
+
+12. License:
+
+This application is distributed under the MIT License.
